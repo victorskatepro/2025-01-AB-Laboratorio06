@@ -1,5 +1,7 @@
 package com.saico.victor.laboratorio06
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +33,89 @@ class DetailActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         showInformation()
+        observeButtons()
     }
+
+
+    private fun observeButtons() {
+        binding.imbWsp.setOnClickListener {
+            goWsp()
+        }
+
+        binding.imbEmail.setOnClickListener {
+            goEmail()
+        }
+
+        binding.imbDial.setOnClickListener {
+            goDial()
+        }
+
+        binding.imbSms.setOnClickListener {
+            goSms()
+        }
+    }
+
+    private fun goWsp() {
+        val bundle = intent.extras
+        if (bundle != null && bundle.containsKey(PHONE_KEY)) {
+            val phone = "+51${bundle?.getString(PHONE_KEY)}"
+            val message = "Hola te he agregado a mi lista de contactos"
+
+            val intentWsp = Intent()
+            intentWsp.action = Intent.ACTION_VIEW
+            intentWsp.data = Uri.parse("https://wa.me/$phone?text=$message")
+
+            startActivity(intentWsp)
+        }
+    }
+
+    private fun goEmail() {
+        val bundle = intent.extras
+        if (bundle != null && bundle.containsKey(EMAIL_KEY)) {
+            val email = bundle?.getString(EMAIL_KEY)
+            val message = "Hola te he agregado a mi lista de contactos"
+            val subject = "Lista de contactos laboratorio 06"
+
+            val intentEmail = Intent()
+            intentEmail.action = Intent.ACTION_SENDTO
+            intentEmail.data = Uri.parse("mailto: $email")
+            intentEmail.putExtra(Intent.EXTRA_SUBJECT, subject)
+            intentEmail.putExtra(Intent.EXTRA_TEXT, message)
+
+            startActivity(intentEmail)
+        }
+    }
+
+    private fun goDial() {
+
+        val bundle = intent.extras
+        if (bundle != null && bundle.containsKey(PHONE_KEY)) {
+            val phone = bundle?.getString(PHONE_KEY)
+
+            val intentDial = Intent()
+            intentDial.action = Intent.ACTION_DIAL
+            intentDial.data = Uri.parse("tel:$phone")
+
+            startActivity(intentDial)
+        }
+
+    }
+
+    private fun goSms() {
+        val bundle = intent.extras
+        if (bundle != null && bundle.containsKey(PHONE_KEY)) {
+            val phone = bundle?.getString(PHONE_KEY)
+            val message = "Hola te he agregado a mi lista de contactos"
+
+            val intentSms = Intent()
+            intentSms.action = Intent.ACTION_SENDTO
+            intentSms.data = Uri.parse("smsto:$phone")
+            intentSms.putExtra("sms_body", message)
+
+            startActivity(intentSms)
+        }
+    }
+
 
     private fun showInformation() {
         val bundle = intent.extras
